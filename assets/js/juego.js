@@ -72,10 +72,37 @@ const valorCarta = (carta) => {
 
     console.log(valor);
     
-    return (isNaN(valor)) ? ((valor === 'A') ? 11 : 10) : (valor * 1); // Ya no creo el 'puntos'
+    return (isNaN(valor)) ? ((valor === 'A') ? 11 : 10) : parseInt(valor); // Ya no creo el 'puntos'
 
 }
 
+const crearImgCarta = (carta) => {
+    const imgCarta = document.createElement('img');
+
+    imgCarta.src = `assets/cartas/${carta}.png`;
+    imgCarta.classList.add('carta');
+
+    return imgCarta;
+}
+
+const mostrarModal = (mensaje) => {
+    const modal = document.querySelector('#resultado-modal');
+    const resultadoTexto = document.querySelector('#resultado-texto');
+
+    resultadoTexto.innerText = mensaje; // Cambia el texto del modal
+    modal.style.display = 'flex';       // Muestra el modal
+};
+
+// Oculta el modal al hacer clic en él
+document.querySelector('#resultado-modal').addEventListener('click', () => {
+    document.querySelector('#resultado-modal').style.display = 'none';
+});
+
+const juegoTerminado = () => {
+    btnPedir.disabled = true;
+    btnDetener.disabled = true;
+    console.warn("Juego Terminado");
+}
 
 btnPedir.addEventListener('click', () => {
     const carta = pedirCarta();
@@ -83,24 +110,20 @@ btnPedir.addEventListener('click', () => {
     puntosJugador += valorCarta(carta);
 
     puntosHTML[0].innerText = puntosJugador;  //[0] = jugador
-
-    const imgCarta = document.createElement('img');
-    imgCarta.src = `assets/cartas/${carta}.png`;
-    imgCarta.classList.add('carta');
     
-    divCartasJugador.append(imgCarta);
+    divCartasJugador.append(crearImgCarta(carta));
 
     if (puntosJugador > 21)
     {
         console.warn("Perdistes papeto lendo");
-        btnPedir.disabled = true;
-        btnDetener.disabled = true;
+        mostrarModal("Perdistes");
+        juegoTerminado();
     }
     else if (puntosJugador === 21)
     {
         console.warn("Ganastes");
-        btnPedir.disabled = true;
-        btnDetener.disabled = true;
+        mostrarModal("Ganastes");
+        juegoTerminado();
     }
 
 
@@ -116,31 +139,27 @@ btnDetener.addEventListener('click', () => {
 
         puntosHTML[1].innerText = puntosComputador;
 
-        const imgCarta = document.createElement('img');
-        imgCarta.src = `assets/cartas/${carta}.png`;
-        imgCarta.classList.add('carta');
-
-        divCartasComputadora.append(imgCarta);
+        divCartasComputadora.append(crearImgCarta(carta));
         
     }
 
     if (puntosComputador === puntosJugador)
     {
         console.warn("Empate");
-        btnPedir.disabled = true;
-        btnDetener.disabled = true;
+        mostrarModal("Empate");
+        juegoTerminado();
     }
     else if (puntosComputador <= 21)
     {
         console.warn("Gano la Computadora :(");
-        btnPedir.disabled = true;
-        btnDetener.disabled = true;
+        mostrarModal("Perdistes");
+        juegoTerminado();
     }
     else
     {
         console.warn("Gana el jugador :)");
-        btnPedir.disabled = true;
-        btnDetener.disabled = true;
+        mostrarModal("Ganastes");
+        juegoTerminado();
     }
     
 })
